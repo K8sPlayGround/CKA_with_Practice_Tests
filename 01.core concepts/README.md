@@ -34,3 +34,38 @@
 - 워커노트에는 kubelet이 있는데 kube api서버의 지시를 듣고 컨테이너와 kube프록시를 관리한다 
 
     클러스터 내부의 통신을 가능하게 한다.
+
+---
+
+### ETCD For Beginners
+
+ETCD: 분산되고 신뢰할 수 있는 스토어. 단순하고 안전하며 신속하다. (key-value store)
+
+<img width="976" alt="image" src="https://github.com/saechimdaeki/Dev-Diary/assets/40031858/cf4df8a0-81c1-40c6-b422-e69c8d1451dc">
+
+##### Install ETCD
+
+1. Downlad
+
+```bash
+curl -L https://github.com/etcd-io/etcd/releases/download/v3.3.11/etcd-v3.3.11-linux-amd64.tar.gz -o etcd-v3.3.11-linux-amd64.tar.gz
+```
+
+2. Extract 
+
+```bash
+tar xzvf etcd-v3.3.11-linux-amd64.tar.gz
+```
+
+3. Run ETCD
+
+```bash
+./etcd-v3.3.11-linux-amd64/etcd
+```
+
+```bash
+./etcdctl put key1 value1
+
+./etcdctl get key1
+-> value1
+```
