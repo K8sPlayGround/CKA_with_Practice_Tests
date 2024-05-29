@@ -37,7 +37,7 @@
 
 ---
 
-### ETCD For Beginners
+## `ETCD`
 
 ETCD: 분산되고 신뢰할 수 있는 스토어. 단순하고 안전하며 신속하다. (key-value store)
 
@@ -69,3 +69,47 @@ tar xzvf etcd-v3.3.11-linux-amd64.tar.gz
 ./etcdctl get key1
 -> value1
 ```
+
+#### ETCD in Kubernetes
+
+이 데이터 저장소는 클러스터에 관한 정보를 저장한다.
+- Nodes
+- PODs
+- Configs
+- Secrets
+- Accounts
+- Roles
+- Bindings
+- Others
+
+## `Kube-API Server`
+
+```bash
+kubectl get nodes
+```
+
+kubectl를 실행하면 kube-apiserver에 도달한다. kube-apiserver가 먼저 요청을 인증하고 유효성을 확인한다
+
+그러면 ETCD Cluster에서 데이터를 회수해 요청된 정보로 응답한다
+
+pod을 생성하는 예시를 보자
+- 요청이 먼저 인증되고 그 다음 유효성이 확인된다
+- 이 경우 kube-apiserver는 노드에 할당하지 않고 pod객체를 생성한다 
+- ETCD Cluster에 있는 정보를 업데이트하고 pod가 생성된 사용자를 업데이트한다
+- 스케줄러는 지속적으로 kube-apiserver를 모니터링하고 노드가 할당되지 않은 새로운 pod가 있다는 것을 알게된다
+- 스케줄러가 올바른 노드를 식별해 새 pod을 키고 다시 kube-apiserver와 통신한다
+- kube-apiserver는 해당하는 클러스터 정보를 업데이트한다
+- kube-apiserver는 해당 정보를 적절한 worker nodes에서 kubelet에 전달한다
+- kube-apiserver는 노드에 pod을 생성하고 컨테이너 런타임 엔진에 지시해 앱 이미지를 배포한다 
+- 완료되면 kublet은 상태를 kube-apiserver로 다시 업데이트하고 kube-apiserver는 ETCD cluster에서 데이터를 업데이트한다
+- 변화를 요구할때마다 비슷한 패턴이 반복된다
+
+kube-apiserver는 클러스터 변경을 위해 수행해야하는 모든 작업의 중심에 있다
+
+요약하자면
+1. Authenticate User
+2. Validate Request
+3. Retrieve data
+4. Update ETCD
+5. Scheduler
+6. Kubelet
